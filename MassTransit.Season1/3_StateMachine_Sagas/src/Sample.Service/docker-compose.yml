@@ -1,0 +1,15 @@
+version: "3.6"
+
+services:
+  rabbitmq:
+    container_name: sampleService_rabbitMq
+    image: masstransit/rabbitmq:latest
+    ports:
+     - "5672:5672"
+     - "15672:15672"
+     - "15692:15692"
+  redis:
+    container_name: sampleService_redis
+    image: redis
+    ports:
+      - "6379:6379"
