@@ -1,4 +1,4 @@
-﻿namespace Sample.Service
+﻿namespace Warehouse.Service
 {
     using System.Diagnostics;
     using System.Linq;
@@ -11,11 +11,8 @@
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
-    using Sample.Components.Consumers;
-    using Sample.Components.CourierActivities;
-    using Sample.Components.StateMachines;
     using Serilog;
-    using Warehouse.Contracts;
+    using Warehouse.Components.Consumers;
 
     internal class Program
     {
@@ -39,22 +36,9 @@
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
                     services.AddMassTransit(cfg =>
                     {
-                        cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-
-                        // add RoutingSlip activity
-                        cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
-
-                        // configure Saga State Machine
-                        cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
-                            .MongoDbRepository(x =>
-                            {
-                                x.Connection = "mongodb://127.0.0.1";
-                                x.DatabaseName = "orderdb";
-                            });
+                        cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
 
                         cfg.UsingRabbitMq(ConfigureBus);
-
-                        cfg.AddRequestClient<AllocateInventory>();
                     });
 
                     services.AddHostedService<MassTransitConsoleHostedService>();
