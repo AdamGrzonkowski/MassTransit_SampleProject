@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Components", "..\src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Contracts", "..\src\Sample.Contracts\Sample.Contracts.csproj", "{654DE998-400C-4535-AF00-6AC8997A817D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Service", "..\src\Sample.Service\Sample.Service.csproj", "{53F469B1-52FF-4DC6-B836-5169633E20FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Service", "..\src\Sample.Service\Sample.Service.csproj", "{53F469B1-52FF-4DC6-B836-5169633E20FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEE58EAD-E040-4607-A939-F305A8FF7F81}"
+	ProjectSection(SolutionItems) = preProject
+		..\docker-compose.yml = ..\docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

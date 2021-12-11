@@ -16,15 +16,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F71E6975-7102-49BD-87BD-C39A70D571F6}"
 	ProjectSection(SolutionItems) = preProject
 		..\docker-compose.yml = ..\docker-compose.yml
+		..\..\..\README.md = ..\..\..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Warehouse", "Warehouse", "{FE3B6123-41F5-494D-BFC6-87BA5C259385}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Contracts", "..\src\Warehouse\Warehouse.Contracts\Warehouse.Contracts.csproj", "{6EB7A1D1-C85C-4634-95DB-D739EBFC7EC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Contracts", "..\src\Warehouse\Warehouse.Contracts\Warehouse.Contracts.csproj", "{6EB7A1D1-C85C-4634-95DB-D739EBFC7EC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Service", "..\src\Warehouse\Warehouse.Service\Warehouse.Service.csproj", "{30017FA9-9103-48D2-B27F-460861F2FE15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Service", "..\src\Warehouse\Warehouse.Service\Warehouse.Service.csproj", "{30017FA9-9103-48D2-B27F-460861F2FE15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Components", "..\src\Warehouse\Warehouse.Components\Warehouse.Components.csproj", "{0DE8D8A5-B790-4B62-BCAF-2A0CFA05160A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Components", "..\src\Warehouse\Warehouse.Components\Warehouse.Components.csproj", "{0DE8D8A5-B790-4B62-BCAF-2A0CFA05160A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
