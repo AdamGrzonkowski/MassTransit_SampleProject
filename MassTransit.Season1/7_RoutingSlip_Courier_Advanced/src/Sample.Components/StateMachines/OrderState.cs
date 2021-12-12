@@ -22,6 +22,8 @@ namespace Sample.Components.StateMachines
         public string? CurrentState { get; set; }
         public string? CustomerNumber { get; set; }
 
+        public string? PaymentCardNumber { get; set; }
+
         /// <summary>
         /// Timestamp when Order was submitted.
         /// </summary>

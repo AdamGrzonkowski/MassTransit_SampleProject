@@ -35,7 +35,9 @@ namespace Sample.Components.StateMachines.OrderStateMachineActivities
 
             await sendEndpoint.Send(new FulfillOrder
             {
-                OrderId = context.Data.OrderId
+                OrderId = context.Data.OrderId,
+                CustomerNumber = context.Instance.CustomerNumber,
+                PaymentCardNumber = context.Instance.PaymentCardNumber
             });
 
             await next.Execute(context);

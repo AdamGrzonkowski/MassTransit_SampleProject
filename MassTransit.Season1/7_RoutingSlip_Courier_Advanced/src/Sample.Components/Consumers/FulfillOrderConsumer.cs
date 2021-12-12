@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using MassTransit.Courier;
 using MassTransit.Courier.Contracts;
+using Sample.Components.CourierActivities;
 using Sample.Contracts.Dtos;
 
 namespace Sample.Components.Consumers
@@ -20,15 +21,16 @@ namespace Sample.Components.Consumers
             // look up activity with below name and send it directly to the specified endpoint
             // the way MassTransit chooses names for theses queues depends on the EndpointNameFormatter chosen (in this example app KebabCaseEndpointNameFormatter was chosen)
             // this formatter strips word "Activity" from the end, lowercases everything and puts '-' chars between words starting with capital letters, adding '_execute_ suffix at the end
-            builder.AddActivity("AllocateInventoryActivity", new Uri("queue:allocate-inventory_execute"), new
+            builder.AddActivity("AllocateInventoryActivity", new Uri("queue:allocate-inventory_execute"), new AllocateInventoryArguments
             {
                 ItemNumber = "Item123",
-                Quantity = 10.0
+                Quantity = 10.0m
             });
 
-            builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"), new
+            builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"), new PaymentArguments
             {
-                CardNumber = "5999-1234-5678-9012", // CardNumber starting with '5999' will trigger exception and Compensation mechanism
+                // we check for null/empty here, because this property was added after contract has been published, so it must be optional, to be backward-compatible
+                CardNumber = !string.IsNullOrEmpty(context.Message.PaymentCardNumber) ? context.Message.PaymentCardNumber : "5999-1234-5678-9012", // CardNumber starting with '5999' will trigger exception and Compensation mechanism
                 Amount = 99.95m
             });
 
@@ -40,6 +42,11 @@ namespace Sample.Components.Consumers
             await builder.AddSubscription(context.SourceAddress,
                  RoutingSlipEvents.Faulted | RoutingSlipEvents.Supplemental,
                  RoutingSlipEventContents.None, x => x.Send<OrderFulfillmentFaulted>(new { context.Message.OrderId }));
+
+            // subscribes to Routing Slip, which will come back to the source (OrderStateMachine) and deliver message to an endpoint when routing slip is completed
+            await builder.AddSubscription(context.SourceAddress,
+                 RoutingSlipEvents.Completed | RoutingSlipEvents.Supplemental,
+                 RoutingSlipEventContents.None, x => x.Send<OrderFulfillmentCompleted>(new { context.Message.OrderId }));
 
             var routingSlip = builder.Build();
 

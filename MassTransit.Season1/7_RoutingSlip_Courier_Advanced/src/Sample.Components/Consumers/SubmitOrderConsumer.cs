@@ -41,7 +41,8 @@ namespace Sample.Components.Consumers
             {
                 CustomerNumber = context.Message.CustomerNumber,
                 OrderId = context.Message.OrderId,
-                Timestamp = context.Message.Timestamp
+                Timestamp = context.Message.Timestamp,
+                PaymentCardNumber = context.Message.PaymentCardNumber
             });
 
             // send successful response

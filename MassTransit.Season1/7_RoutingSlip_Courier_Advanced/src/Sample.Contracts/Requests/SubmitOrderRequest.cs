@@ -4,5 +4,6 @@
     {
         public Guid OrderId { get; init; } = Guid.Empty;
         public string CustomerNumber { get; init; } = string.Empty;
+        public string PaymentCardNumber { get; init; } = string.Empty;
     }
 }

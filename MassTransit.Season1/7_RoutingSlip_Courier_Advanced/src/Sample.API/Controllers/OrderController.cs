@@ -63,7 +63,8 @@ namespace Twitch.Controllers
             {
                 OrderId = request.OrderId,
                 Timestamp = DateTimeOffset.UtcNow,
-                CustomerNumber = request.CustomerNumber
+                CustomerNumber = request.CustomerNumber,
+                PaymentCardNumber = request.PaymentCardNumber
             });
 
             if (accepted.IsCompletedSuccessfully)

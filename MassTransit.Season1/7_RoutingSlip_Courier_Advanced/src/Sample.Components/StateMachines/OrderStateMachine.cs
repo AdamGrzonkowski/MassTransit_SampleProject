@@ -26,6 +26,7 @@ namespace Sample.Components.StateMachines
             Event(() => OrderSubmitted, x => x.CorrelateById(x => x.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(x => x.Message.OrderId));
             Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(x => x.Message.OrderId);
@@ -56,6 +57,7 @@ namespace Sample.Components.StateMachines
                     {
                         context.Instance.SubmitDate = context.Data.Timestamp; // store datetime when Order was submitted
                         context.Instance.CustomerNumber = context.Data.CustomerNumber;
+                        context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
                         context.Instance.Updated = DateTimeOffset.UtcNow; // store datetime of state's update
                     })
                     .TransitionTo(Submitted));
@@ -70,7 +72,9 @@ namespace Sample.Components.StateMachines
 
             During(Accepted,
                 When(FulfillmentFaulted)
-                    .TransitionTo(Faulted));
+                    .TransitionTo(Faulted),
+                When(FulfillmentCompleted)
+                    .TransitionTo(Completed));
 
             /* By default, MassTransit should throw exception when we try to process same State for the given Instance again, but there's a way to do it cleaner:
              * DuringAny never includes Initial or Final states. It executes however for any other states that those two.
@@ -102,6 +106,7 @@ namespace Sample.Components.StateMachines
 
         public State? Accepted { get; private set; }
         public State? Cancelled { get; private set; }
+        public State? Completed { get; private set; }
         public State? Faulted { get; private set; }
         public State? Submitted { get; private set; }
 
@@ -109,6 +114,7 @@ namespace Sample.Components.StateMachines
 
         public Event<OrderAccepted>? OrderAccepted { get; private set; }
         public Event<OrderSubmitted>? OrderSubmitted { get; private set; }
+        public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }
         public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
         public Event<OrderStatus>? OrderStatusRequested { get; private set; }
     }
