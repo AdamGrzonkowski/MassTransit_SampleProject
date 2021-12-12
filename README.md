@@ -2,6 +2,8 @@
 Projects done while learning from MassTransit's documentation and Youtube course led by MassTransit's project leader and main contributor - Chris Patterson:
 https://www.youtube.com/playlist?list=PLx8uyNNs1ri2MBx6BjPum5j9_MMdIfM9C
 
+## Table of Contents
+
 - [MassTransit Sample](#masstransit-sample)
   * [Prerequisites](#prerequisites)
   * [Getting started](#getting-started)
