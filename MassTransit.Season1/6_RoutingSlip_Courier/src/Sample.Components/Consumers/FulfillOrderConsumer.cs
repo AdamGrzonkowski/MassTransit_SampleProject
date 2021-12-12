@@ -16,7 +16,7 @@ namespace Sample.Components.Consumers
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
 
             // look up activity with below name and send it directly to the specified endpoint
-            builder.AddActivity("AllocateInventory", new Uri("queue:allocate-inventory_execute"), new
+            builder.AddActivity("AllocateInventory", new Uri("exchange:allocate-inventory_execute"), new
             {
                 ItemNumber = "Item123",
                 Quantity = 10.0

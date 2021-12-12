@@ -72,7 +72,7 @@
         private static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
         {
             // we need to explicitly specify that we're using Message Scheduler
-            configurator.UseMessageScheduler(new Uri("queue:quartz"));
+            configurator.UseMessageScheduler(new Uri("exchange:quartz"));
 
             configurator.ConfigureEndpoints(context);
         }
