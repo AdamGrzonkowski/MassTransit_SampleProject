@@ -91,8 +91,8 @@ For example:
 
 ### 4_ErrorHandling
 In this solution, Unit Tests were added, along with SagaDefinition and ConsumerDefinition. These definitions allow to set up, among other things, error prevention mechanisms. Following were defined:
-- Retry pattern
-- In-Memory Outbox
+- [Retry pattern](https://masstransit-project.com/usage/exceptions.html#retry), configured on receive endpoints' level
+- [In-Memory Outbox](https://masstransit-project.com/articles/outbox.html)
 
 Also, ability to generate State Machine diagram was added via UnitTest called 'GenerateStateMachineGraph' defined in [OrderStateMachineTests](MassTransit.Season1/4_ErrorHandling/src/Sample.UnitTests/StateMachines/OrderStateMachineTests.cs) class.
 
@@ -148,7 +148,7 @@ In this project we dabble into the subject of Routing Slip using MassTransit's [
 
 Warehouse represents completely different service / domain and should be treated as a separate Microservice, but for the sake of simplicity, we keep it in the same repo / solution, however when communication is configured, we assume it's separate service. Communication between them is done via Routing Slip (MassTransit's Courier).
 
-Contract classes are referenced and shared between projects, as the idea is that they would be refenced via Nuget (via JFrog or something similar) anyway. Alternative would be to define same classes in every Microservice (so same ones in 'Sample' and 'Warehouse'), to completely decouple them, but this approach is not used here.
+Contract classes are referenced and shared between projects, as the idea is that they would be refenced via Nuget (via [JFrog Artifactory](https://www.jfrog.com/confluence/display/JFROG/NuGet+Repositories) or something similar) anyway. Alternative would be to define same classes in every Microservice (so same ones in 'Sample' and 'Warehouse'), to completely decouple them, but this approach is not used here.
 
 #### Projects to run
 1. [Sample.API](MassTransit.Season1/6_RoutingSlip_Courier/src/Sample.API)
