@@ -5,7 +5,8 @@ using Sample.Contracts.Dtos;
 namespace Sample.Components.Consumers
 {
     /// <summary>
-    /// Executes RoutingSlip.
+    /// Executes RoutingSlip, related to fulfilling order.
+    /// Triggers allocating items from warehouse, payment process etc.
     /// </summary>
     public class FulfillOrderConsumer :
         IConsumer<FulfillOrder>
@@ -16,10 +17,18 @@ namespace Sample.Components.Consumers
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
 
             // look up activity with below name and send it directly to the specified endpoint
-            builder.AddActivity("AllocateInventory", new Uri("queue:allocate-inventory_execute"), new
+            // the way MassTransit chooses names for theses queues depends on the EndpointNameFormatter chosen (in this example app KebabCaseEndpointNameFormatter was chosen)
+            // this formatter strips word "Activity" from the end, lowercases everything and puts '-' chars between words starting with capital letters, adding '_execute_ suffix at the end
+            builder.AddActivity("AllocateInventoryActivity", new Uri("queue:allocate-inventory_execute"), new
             {
                 ItemNumber = "Item123",
                 Quantity = 10.0
+            });
+
+            builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"), new
+            {
+                CardNumber = "5999-1234-5678-9012", // CardNumber starting with '5999' will trigger exception and Compensation mechanism
+                Amount = 99.95m
             });
 
             // this is alternative approach to pass Input parameters to Courier's activity, instead of using Arguments class

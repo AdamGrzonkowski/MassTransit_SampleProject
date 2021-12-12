@@ -10,10 +10,11 @@ namespace Warehouse.Components.StateMachines
         public AllocationStateMachine()
         {
             Event(() => AllocationCreated, x => x.CorrelateById(m => m.Message.AllocationId));
+            Event(() => ReleaseRequested, x => x.CorrelateById(m => m.Message.AllocationId));
 
             Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
             {
-                // specify how receive message should be correlated to Saga instance
+                // specify how scheduled message should be correlated to the Saga instance once it's received
                 s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
 
@@ -25,12 +26,16 @@ namespace Warehouse.Components.StateMachines
                         HoldExpiration, // specifies which Schedule object we're allocating / executing
                         context => context.Init<AllocationHoldDurationExpired>(new { context.Data.AllocationId }), // initialize the scheduled message which is gonna be sent
                         context => context.Data.HoldDuration) // pass duration, after which, scheduled message is gonna be sent
-                    .TransitionTo(Allocated));
+                    .TransitionTo(Allocated),
+                When(ReleaseRequested)
+                    .TransitionTo(Released));
 
             During(Allocated,
                 When(HoldExpiration.Received)
-                .Finalize()); // this puts Saga in Final state, meaning all processes related to it, have finished
-
+                    .Finalize(), // this puts Saga in Final state, meaning all processes related to it, have finished
+                When(ReleaseRequested)
+                    .Unschedule(HoldExpiration) // since allocation is released, we no longer need to check its HoldExpiration time
+                    .Finalize());
             // this tells Saga Repository to delete finalized Sagas
             SetCompletedWhenFinalized();
         }
@@ -39,6 +44,7 @@ namespace Warehouse.Components.StateMachines
         public State? Released { get; set; }
 
         public Event<AllocationCreated>? AllocationCreated { get; set; }
+        public Event<AllocationReleaseRequested>? ReleaseRequested { get; set; }
 
         public Schedule<AllocationState, AllocationHoldDurationExpired>? HoldExpiration { get; set; }
     }
