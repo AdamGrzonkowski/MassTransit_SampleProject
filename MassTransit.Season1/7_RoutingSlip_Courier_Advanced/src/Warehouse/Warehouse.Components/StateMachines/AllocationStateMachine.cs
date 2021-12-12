@@ -1,6 +1,5 @@
 ﻿using Automatonymous;
 using MassTransit;
-using Microsoft.Extensions.Logging;
 using Warehouse.Contracts;
 
 namespace Warehouse.Components.StateMachines
@@ -14,8 +13,6 @@ namespace Warehouse.Components.StateMachines
 
             Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
             {
-                s.Delay = TimeSpan.FromHours(1);
-
                 // specify how receive message should be correlated to Saga instance
                 s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
@@ -24,9 +21,10 @@ namespace Warehouse.Components.StateMachines
 
             Initially(
                 When(AllocationCreated)
-                    // initialize the message which is gonna be sent
-                    .Schedule(HoldExpiration, context => context.Init<AllocationHoldDurationExpired>(new { context.Data.AllocationId }),
-                        context => context.Data.HoldDuration) // pass duration specified in the message
+                    .Schedule(
+                        HoldExpiration, // specifies which Schedule object we're allocating / executing
+                        context => context.Init<AllocationHoldDurationExpired>(new { context.Data.AllocationId }), // initialize the scheduled message which is gonna be sent
+                        context => context.Data.HoldDuration) // pass duration, after which, scheduled message is gonna be sent
                     .TransitionTo(Allocated));
 
             During(Allocated,
