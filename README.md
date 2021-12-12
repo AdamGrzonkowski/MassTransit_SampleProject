@@ -2,6 +2,29 @@
 Projects done while learning from MassTransit's documentation and Youtube course led by MassTransit's project leader and main contributor - Chris Patterson:
 https://www.youtube.com/playlist?list=PLx8uyNNs1ri2MBx6BjPum5j9_MMdIfM9C
 
+- [MassTransit Sample](#masstransit-sample)
+  * [Prerequisites](#prerequisites)
+  * [Getting started](#getting-started)
+  * [Solutions](#solutions)
+    + [1_InMemory_Mediator](#1-inmemory-mediator)
+      - [Projects to run](#projects-to-run)
+    + [2_RabbitMQ_](#2-rabbitmq-)
+      - [Projects to run](#projects-to-run-1)
+        * [Looking up messages in RabbitMQ](#looking-up-messages-in-rabbitmq)
+    + [3_StateMachine_Sagas](#3-statemachine-sagas)
+      - [Projects to run](#projects-to-run-2)
+        * [Looking up Sagas stored in Redis](#looking-up-sagas-stored-in-redis)
+    + [4_ErrorHandling](#4-errorhandling)
+      - [Projects to run](#projects-to-run-3)
+        * [OrderStateMachine graph](#orderstatemachine-graph)
+    + [5_StateMachine_Sagas_Advanced](#5-statemachine-sagas-advanced)
+      - [Projects to run](#projects-to-run-4)
+        * [OrderStateMachine graph](#orderstatemachine-graph-1)
+        * [Looking up Sagas stored in MongoDB](#looking-up-sagas-stored-in-mongodb)
+    + [6_RoutingSlip_Courier](#6-routingslip-courier)
+      - [Projects to run](#projects-to-run-5)
+        * [OrderStateMachine graph](#orderstatemachine-graph-2)
+
 
 ## Prerequisites
 You need to have on your machine installed:
@@ -91,6 +114,30 @@ Also, State Machine's [Activity](https://masstransit-project.com/usage/sagas/aut
 
 ##### OrderStateMachine graph
 ![OrderStateMachine graph](MassTransit.Season1/5_StateMachine_Sagas_Advanced/OrderStateMachine_graph.png)
+
+##### Looking up Sagas stored in MongoDB
+Open cli of mongodb image via Docker desktop app. Type:
+
+    mongo
+ 
+To get list of all databases, type:
+
+    show dbs
+
+To use db created by MassTransit type the same name which was specified in MongoDbRepository() constructor, in [Program](MassTransit.Season1/5_StateMachine_Sagas_Advanced/src/Sample.Service/Program.cs) class. In this project we used name 'orderdb', so:
+
+    use orderdb
+
+List all collections by typing:
+
+    show collections
+
+In this example MassTransit created collection named 'order.states', so to list all Sagas:
+
+    db.order.states.find()
+
+Finding by OrderId is trickier than in Redis. In Redis, they KEY was OrderId, saved as Guid. MongoDB uses BsonId, which differs from Guid used by .NET.
+The most convenient way to retrieve specific Order state by id is to use GET endpoint defined in OrderController in this case, which lets MassTransit translate BsonId and Guids.
 
 ### 6_RoutingSlip_Courier
 In this project we dabble into the subject of Routing Slip using MassTransit's [Courier](https://masstransit-project.com/advanced/courier/). New console app is created called 
