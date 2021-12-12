@@ -25,6 +25,7 @@ namespace Sample.Components.StateMachines
             // if saga instance does not exist yet in saga repository, MassTransit will create it
             Event(() => OrderSubmitted, x => x.CorrelateById(x => x.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(x => x.Message.OrderId));
+            Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(x => x.Message.OrderId);
@@ -67,6 +68,10 @@ namespace Sample.Components.StateMachines
                     .Activity(x => x.OfType<AcceptOrderActivity>())
                     .TransitionTo(Accepted));
 
+            During(Accepted,
+                When(FulfillmentFaulted)
+                    .TransitionTo(Faulted));
+
             /* By default, MassTransit should throw exception when we try to process same State for the given Instance again, but there's a way to do it cleaner:
              * DuringAny never includes Initial or Final states. It executes however for any other states that those two.
              * Code below, after When(OrderSubmitted), ensures that if some later state, like OrderAccepted (which comes after OrderSubmitted) is actually
@@ -97,12 +102,14 @@ namespace Sample.Components.StateMachines
 
         public State? Accepted { get; private set; }
         public State? Cancelled { get; private set; }
+        public State? Faulted { get; private set; }
         public State? Submitted { get; private set; }
 
         public Event<CustomerAccountClosed>? CustomerAccountClosed { get; private set; }
 
         public Event<OrderAccepted>? OrderAccepted { get; private set; }
         public Event<OrderSubmitted>? OrderSubmitted { get; private set; }
+        public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
         public Event<OrderStatus>? OrderStatusRequested { get; private set; }
     }
 }

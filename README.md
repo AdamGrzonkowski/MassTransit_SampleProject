@@ -157,3 +157,10 @@ Contract classes are referenced and shared between projects, as the idea is that
 
 ##### OrderStateMachine graph
 ![OrderStateMachine graph](MassTransit.Season1/6_RoutingSlip_Courier/OrderStateMachine_graph.png)
+
+
+### Considerations to take before using MassTransit
+#### 1. MassTransit runtime requires the permissions to create/delete exchanges and queues
+All users connecting to the bus of choice (RabbitMQ, Azure Service Bus or other) via MassTransit must have elevated permission. This might not be in line with you company's security policy: https://github.com/MassTransit/MassTransit/discussions/2862.
+#### 2. MassTransit does not have commercial support  
+Even though MassTransit has a lively community, it lacks commercial support. Bugs found in older versions might not be fixed via minor versions. Users are generally encouraged to upgrade to the newest version of MassTransit, but that may sometimes include breaking changes and refactoring might be costly then.

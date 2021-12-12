@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using MassTransit.Courier;
+using MassTransit.Courier.Contracts;
 using Sample.Contracts.Dtos;
 
 namespace Sample.Components.Consumers
@@ -34,6 +35,11 @@ namespace Sample.Components.Consumers
             // this is alternative approach to pass Input parameters to Courier's activity, instead of using Arguments class
             // it's recommended way to pass variables which are shared between multiple activities, as it reduces duplicating code
             builder.AddVariable("OrderId", context.Message.OrderId);
+
+            // subscribes to Routing Slip, which will come back to the source (OrderStateMachine) and deliver message to an endpoint when some error happens
+            await builder.AddSubscription(context.SourceAddress,
+                 RoutingSlipEvents.Faulted | RoutingSlipEvents.Supplemental,
+                 RoutingSlipEventContents.None, x => x.Send<OrderFulfillmentFaulted>(new { context.Message.OrderId }));
 
             var routingSlip = builder.Build();
 
