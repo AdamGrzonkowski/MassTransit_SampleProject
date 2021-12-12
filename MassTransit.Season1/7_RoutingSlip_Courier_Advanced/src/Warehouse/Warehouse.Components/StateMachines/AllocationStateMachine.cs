@@ -30,6 +30,23 @@ namespace Warehouse.Components.StateMachines
                 When(ReleaseRequested)
                     .TransitionTo(Released));
 
+            /* This handles case when Saga was already saved (committed) to Saga Repository, but RabbitMQ went down
+             * in such case, RabbitMQ will act as it should and will try to re-deliver messages as soon as it's up and running again
+             * but in Saga Repository there will already be info that Saga already is in 'Allocated' state (because it was already committed)
+             * to handle such case, we need to do the behavior When(AllocationCreated) without the state TransitionTo(Allocated) again
+             * */
+            During(Allocated,
+                When(AllocationCreated)
+                    .Schedule(
+                        HoldExpiration, // specifies which Schedule object we're allocating / executing
+                        context => context.Init<AllocationHoldDurationExpired>(new { context.Data.AllocationId }), // initialize the scheduled message which is gonna be sent
+                        context => context.Data.HoldDuration) // pass duration, after which, scheduled message is gonna be sent
+            );
+
+            During(Released,
+                When(AllocationCreated)
+                    .Finalize()); // if we're already in Released state, simply finalzie
+
             During(Allocated,
                 When(HoldExpiration.Received)
                     .Finalize(), // this puts Saga in Final state, meaning all processes related to it, have finished
@@ -40,12 +57,12 @@ namespace Warehouse.Components.StateMachines
             SetCompletedWhenFinalized();
         }
 
-        public State? Allocated { get; set; }
-        public State? Released { get; set; }
+        public State? Allocated { get; private set; }
+        public State? Released { get; private set; }
 
-        public Event<AllocationCreated>? AllocationCreated { get; set; }
-        public Event<AllocationReleaseRequested>? ReleaseRequested { get; set; }
+        public Event<AllocationCreated>? AllocationCreated { get; private set; }
+        public Event<AllocationReleaseRequested>? ReleaseRequested { get; private set; }
 
-        public Schedule<AllocationState, AllocationHoldDurationExpired>? HoldExpiration { get; set; }
+        public Schedule<AllocationState, AllocationHoldDurationExpired>? HoldExpiration { get; private set; }
     }
 }
