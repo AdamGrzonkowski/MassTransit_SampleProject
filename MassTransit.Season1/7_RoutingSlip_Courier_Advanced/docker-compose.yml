@@ -1,0 +1,28 @@
+version: "3.6"
+
+services:
+  rabbitmq:
+    container_name: sampleService_rabbitMq
+    image: masstransit/rabbitmq:latest
+    ports:
+     - "5672:5672"
+     - "15672:15672"
+     - "15692:15692"
+  mongo:
+    container_name: sampleService_mongodb
+    image: "mongo"
+    ports:
+    - '27017-27019:27017-27019'
+  sqlserver:
+    container_name: sampleService_quartz_sqlServer
+    image: masstransit/sqlserver-quartz:latest
+    ports:
+      - 1433:1433
+  quartz:
+    container_name: sampleService_quartz
+    image: masstransit/quartz:latest
+    environment:
+      MT_Scheduler: 'quartz'
+      MT_Quartz__ConnectionString: 'Server=tcp:sqlserver;Database=quartznet;Persist Security Info=False;User ID=sa;Password=Quartz!DockerP4ss;Encrypt=False;TrustServerCertificate=True;'
+    ports:
+     - "5002:80"
