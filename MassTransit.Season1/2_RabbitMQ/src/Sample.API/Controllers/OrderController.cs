@@ -23,7 +23,7 @@ namespace Twitch.Controllers
         [ProducesResponseType(((int)HttpStatusCode.BadRequest), Type = typeof(OrderSubmissionRejected))]
         public async Task<IActionResult> Post(string id, string customerNumber)
         {
-            var (accepted, rejected) = await _submitOrderRequestClient.GetResponse<OrderSubmissionAccepted, OrderSubmissionRejected>(new
+            var (accepted, rejected) = await _submitOrderRequestClient.GetResponse<OrderSubmissionAccepted, OrderSubmissionRejected>(new SubmitOrder
             {
                 OrderId = id,
                 Timestamp = DateTimeOffset.UtcNow,
